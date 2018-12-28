@@ -1,0 +1,73 @@
+{
+  "componentName": "user-form",
+  "elements": [{
+    "element": "form",
+    "formGroup": "userForm",
+    "title": "Usuário",
+    "formatForm": [
+      {
+        "formGroupName": "mainGroup",
+        "element": "input",
+        "type": "text",
+        "formControlName": "name",
+        "placeholder": "Nome",
+        "validators": [
+          {
+            "required": true,
+            "maxLenght": 80,
+            "minLength": 10
+          }
+        ],
+        "style": "width: 100%",
+        "classes": [],
+        "ids": [],
+        "events": [],
+        "attributes": []
+      },
+      {
+        "formGroupName": "mainGroup",
+        "element": "select",
+        "formControlName": "gender",
+        "placeholder": "Gênero",
+        "validators": [
+          {
+            "required": true
+          }
+        ],
+        "style": "width: 100%",
+        "classes": [],
+        "ids": [],
+        "events": [],
+        "options": {
+          "route": "Genders"
+        },
+        "attributes": [
+          {
+            "multiple": true
+          }
+        ]
+      },
+      {
+        "ngIf": "userForm.control.documentType.value === 'cpf'",
+        "formGroupName": "documentGroup",
+        "element": "input",
+        "type": "text",
+        "formControlName": "cpf",
+        "placeholder": "CPF",
+        "validators": [
+          {
+            "required": true,
+            "cpf": true
+          }
+        ],
+        "mask": "000.000.000-00",
+        "style": "width: 100%",
+        "classes": [],
+        "ids": [],
+        "events": [],
+        "attributes": []
+      }
+    ]
+  }]
+}
+
