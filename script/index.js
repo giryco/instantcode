@@ -216,7 +216,7 @@ setTSCode = (object) => {
 
         switch (element.element) {
             case 'form':
-                objectToFeedTS = setTSFormCode(element); //must return an object
+                objectToFeedTS = setTSFormCode(object, element); //must return an object
                 break;
 
             default:
@@ -227,59 +227,136 @@ setTSCode = (object) => {
 
     componentNameObject = componentNameToCamelCase(object.componentName);
 
-    tsCode += "import { Component, OnInit, Inject } from '@angular/core';\
-    " + objectToFeedTS.formImport + "\
-    " + objectToFeedTS.materialImport + "\
-    /**\
-     * Services\
-     */\
-     " + objectToFeedTS.serviceImport + "\
-    /**\
-     * Validators\
-     */\
-     " + objectToFeedTS.materialImport + "\
-     @Component({\
-        selector: 'app-" + object.componentName + "',\
-        templateUrl: './" + object.componentName + ".component.html',\
-        styleUrls: ['./" + object.componentName + ".component.css']\
-      })\
-      export class " + componentNameObject.camelCaseNameFirstUpper + "Component implements OnInit {\
-        \
-      }";
+    tsCode +=   `import { Component, OnInit, Inject } from '@angular/core';
+                ${objectToFeedTS.formImport}
+                ${objectToFeedTS.materialImport}
+                /**
+                 * Services
+                 */
+                ${objectToFeedTS.serviceImport}
+                /**
+                 * Validators
+                 */
+                ${objectToFeedTS.validatorImport}
+                @Component({
+                    selector: 'app-${object.componentName}',
+                    templateUrl: './${object.componentName}.component.html',
+                    styleUrls: ['./${object.componentName}.component.css']
+                })
+                export class ${componentNameObject.camelCaseNameFirstUpper}Component implements OnInit {
+                    ${objectToFeedTS.attributes}
 
-      document.getElementById("angularTSTitle").innerHTML = "TS Code";
-      document.getElementById("angularTSContent").innerText = tsCode.toString();
-}
+                    constructor (
+                        ${objectToFeedTS.constructor}
+                    ) {}
+                    ngOnInit() {
+                        ${objectToFeedTS.ngOnInit}
+                    }
+                }`;
 
-setTSFormCode = (object) => {
-    let tsCode = '',
+                document.getElementById("angularTSTitle").innerHTML = "TS Code";
+                document.getElementById("angularTSContent").innerText = tsCode.toString();
+            }
+
+setTSFormCode = (object, elementFromObject) => {
+    console.log(object);
+    if (!elementFromObject.formGroup) {
+        console.log('formGroup é um atributo obrigatório');
+        return false;
+    }
+
+    if (!elementFromObject.formatForm || elementFromObject.formatForm.length < 1) {
+        console.log('Array de formatForm é um atributo obrigatório');
+        return false;
+    }
+    const componentNameObject = componentNameToCamelCase(object.componentName);
+    let checkGroup = '',
     objectToFeedTS = {
         componentName: '',
         formImport: '',
         serviceImport: '',
         materialImport: '',
+        validatorImport: '',
+        attributes: '',
+        constructor: '',
+        ngOnInit: '',
     };
-    if (!object.formGroup) {
-        console.log('formGroup é um atributo obrigatório');
-        return false;
-    }
+    objectToFeedTS.formImport += `import { FormGroup, Validators, FormBuilder } from '@angular/forms';\n`;
 
-    if (!object.formatForm || object.formatForm.length < 1) {
-        console.log('Array de formatForm é um atributo obrigatório');
-        return false;
-    }
+    objectToFeedTS.attributes += `${elementFromObject.formGroup}DialogForm: FormGroup;\n`;
 
-    tsCode += object.formGroup + ': FormGroup;';
+    objectToFeedTS.constructor += `private fb: FormBuilder,\n`;
+
+    objectToFeedTS.ngOnInit += `this.${componentNameObject.camelCaseNameFirstLower}DialogForm = this.fb.group({\n`;
+
+    elementFromObject.formatForm.forEach((element, index) => {
+        var validatorsString = '';
+        if (element.validators) {
+            var object = setTSFormValidators(element.validators);
+
+            object.forEach(e => {
+                validatorsString += ', ' + e.string;
+                if (e.import) {
+                    objectToFeedTS.validatorImport += e.import + '\n';
+                }
+            });
+        }
+
+        if (index === 0) {
+            objectToFeedTS.ngOnInit += "'" + element.formGroupName + "': this.fb.group({\n";
+        }
+
+        if ((checkGroup != element.formGroupName) && index !== 0) {
+            objectToFeedTS.ngOnInit += "}),'" + element.formGroupName + "': this.fb.group({\n";
+            objectToFeedTS.ngOnInit += `'${element.formControlName}': [${element.formControlNameDefaultValue ? element.formControlNameDefaultValue : null}${validatorsString}], \n`;
+        } else {
+            objectToFeedTS.ngOnInit += `'${element.formControlName}': [${element.formControlNameDefaultValue ? element.formControlNameDefaultValue : null}${validatorsString}], \n`;
+        }
+
+        checkGroup = element.formGroupName;
+    });
+    
+    objectToFeedTS.ngOnInit += "})\n });\n";
 
     return objectToFeedTS;
     // document.getElementById("fileContents").innerText = tsCode.toString();
 }
-//     <form [formGroup]="materialDialogForm">
-//         <fieldset formGroupName="materialGroup">
-//         </fieldset>
-//     </form>
 
-// <div mat-dialog-actions>
-//     <button mat-raised-button (click)="onAccountDialogSubmit()" [disabled]="materialDialogForm.invalid">{{this.submitButton}}</button>
-// </div>
-// `;
+setTSFormValidators = (validators) => {
+    var validatorsReturn = [];
+    for (const key in validators) { console.log(validators);
+        if (validators.hasOwnProperty(key)) {
+            switch (key) {
+                case 'required':
+                    validatorsReturn.push({
+                        string: 'Validators.required'
+                    })
+                break;
+
+                case 'maxLength':
+                    validatorsReturn.push({
+                        string: `Validators.maxLength(${validators[key]})`
+                    })
+                break;
+
+                case 'minLength':
+                    validatorsReturn.push({
+                        string: `Validators.minLength(${validators[key]})`
+                    })
+                break;
+
+                case 'cpf':
+                    validatorsReturn.push({
+                        string: 'ValidateCpf',
+                        import: 'import { ValidateCpf } from \'src/app/modules/shared/validators/cpf.validator\';'
+                    })
+                break;
+            
+                default:
+                break;
+            }
+        }
+    }
+
+    return validatorsReturn;
+}

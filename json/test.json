@@ -11,13 +11,11 @@
         "type": "text",
         "formControlName": "name",
         "placeholder": "Nome",
-        "validators": [
-          {
-            "required": true,
-            "maxLenght": 80,
-            "minLength": 10
-          }
-        ],
+        "validators": {
+          "required": true,
+          "maxLenght": 80,
+          "minLength": 10
+        },
         "style": "width: 100%",
         "classes": [],
         "ids": [],
@@ -29,11 +27,9 @@
         "element": "select",
         "formControlName": "gender",
         "placeholder": "Gênero",
-        "validators": [
-          {
-            "required": true
-          }
-        ],
+        "validators": {
+          "required": true
+        },
         "style": "width: 100%",
         "classes": [],
         "ids": [],
@@ -54,12 +50,10 @@
         "type": "text",
         "formControlName": "cpf",
         "placeholder": "CPF",
-        "validators": [
-          {
-            "required": true,
-            "cpf": true
-          }
-        ],
+        "validators": {
+          "required": true,
+          "cpf": true
+        },
         "mask": "000.000.000-00",
         "style": "width: 100%",
         "classes": [],
