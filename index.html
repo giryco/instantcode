@@ -4,21 +4,51 @@
 		<!--  Meta  -->
 		<meta charset="UTF-8" />
 		<title>Instant Code</title>
+		<link rel="stylesheet" href="style.css">
 	</head>
 
-	<body>
-		<form>
-			<input type="file" id="fileForUpload">
-			<input onClick="createElementCode()" type="button" value="Carregar">
-		</form>
+	<body onload="display('none');">
+		<button onclick="display('code');">Carregar objeto</button>
+		<button onclick="display('object');">Criar objeto</button>
+		
+		<div id="object">
+			<h2>Criar objeto</h2>
+			<div>
+				<input type="text" placeholder="Nome do componente" onkeyup="displayOverComponent('element')">
+			</div>
 
-		<h2 id="angularTitle"></h2>
-		<h3 id="angularHTMLTitle"></h3>
-		<div id="angularHTMLContent"></div>
+			<div id="element">				
+				<button id="form" onclick="addElementToObject('form');">Adicionar formulário</button>
 
-		<h3 id="angularTSTitle"></h3>
-		<div id="angularTSContent"></div>
+				<button id="list" onclick="addElementToObject('list');">Adicionar listagem</button>
+			</div>
+			
+			<div id="setObject">
+
+			</div>
+		</div>
+
+		<div id="code">
+			<h2>Carregar objeto</h2>
+			<form>
+				<input type="file" id="fileForUpload">
+				<input onClick="createElementCode()" type="button" value="Carregar">
+			</form>
+	
+			<h2 id="angularTitle"></h2>
+			<h3 id="angularHTMLTitle"></h3>
+			<div id="angularHTMLContent"></div>
+	
+			<h3 id="angularTSTitle"></h3>
+			<div id="angularTSContent"></div>
+		</div>
 
 		<script src="script/index.js"></script>
+		<script src="script/create-object.js"></script>
+		<script src="script/load-object.js"></script>
+		<script src="script/angular/ts-form.js"></script>
+		<script src="script/angular/ts-form-event.js"></script>
+		<script src="script/angular/html-form.js"></script>
+		<script src="script/shared/string.js"></script>
 	</body>
 </html>

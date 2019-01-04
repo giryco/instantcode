@@ -19,7 +19,11 @@
         "style": "width: 100%",
         "classes": [],
         "ids": [],
-        "events": [],
+        "events": [{
+          "action": "change",
+          "name": "checkName",
+          "params": ["nameToCheck"]
+        }],
         "attributes": []
       },
       {
@@ -35,7 +39,9 @@
         "ids": [],
         "events": [],
         "options": {
-          "route": "Genders"
+          "api": {
+            "route": "Genders"
+          }
         },
         "attributes": [
           {
