@@ -13,18 +13,24 @@
 		
 		<div id="object">
 			<h2>Criar objeto</h2>
-			<div>
-				<input type="text" placeholder="Nome do componente" onkeyup="displayOverComponent('element')">
-			</div>
 
-			<div id="element">				
+			<div id="element">		
 				<button id="form" onclick="addElementToObject('form');">Adicionar formulário</button>
 
 				<button id="list" onclick="addElementToObject('list');">Adicionar listagem</button>
 			</div>
+
+			<div id="setForm">				
+				<button id="formInput" onclick="setFormElement('input');">Input</button>
+
+				<button id="formSelect" onclick="setFormElement('select');">Select</button>
+			</div>
+
+			<div>
+				Nome do componente: <input type="text" id="component" onkeydown="displayOverComponent('element')">
+			</div>
 			
 			<div id="setObject">
-
 			</div>
 		</div>
 
